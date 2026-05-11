@@ -1,0 +1,29 @@
+# Build artefacts
+build/
+dist/
+*.spec
+*.zip
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+cachedir/
+
+# Dev / test
+.venv/
+venv/
+.env
+data/
+*.log
+*.png
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Berry app (not needed in the consumer container)
+berry_app.py
+templates/
