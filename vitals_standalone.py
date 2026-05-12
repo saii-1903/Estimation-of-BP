@@ -488,7 +488,7 @@ def process_vitals(json_data, source_hz=None):
     # ── 5. Per-segment accelerometer motion gate ──────────────────────────────
     motion_mask = [False] * 6   # default: no motion
 
-    if device_type in (DEVICE_CHECKME, DEVICE_BERRYMED):
+    if device_type in (DEVICE_CHECKME,):  # BERRYMED accelerometer disabled for now
         acc_raw = None
         for candidate in ("acc", "accelerometer", "accel", "motion", "imu"):
             acc_raw = json_data.get(candidate)
@@ -496,6 +496,17 @@ def process_vitals(json_data, source_hz=None):
                 acc_raw = (json_data.get("device") or {}).get(candidate)
             if acc_raw is not None:
                 break
+
+        # Handle new BerryMed format: accelerometer with x-axis, y-axis, z-axis dict
+        if acc_raw is not None and isinstance(acc_raw, dict):
+            x = acc_raw.get("x-axis") or acc_raw.get("x_axis") or acc_raw.get("x") or []
+            y = acc_raw.get("y-axis") or acc_raw.get("y_axis") or acc_raw.get("y") or []
+            z = acc_raw.get("z-axis") or acc_raw.get("z_axis") or acc_raw.get("z") or []
+            if x and y and z and len(x) == len(y) == len(z):
+                # Convert to 2D array format [[x,y,z], [x,y,z], ...]
+                acc_raw = np.array(list(zip(x, y, z)), dtype=float)
+            else:
+                acc_raw = None
 
         if acc_raw is not None:
             motion_scores = _acc_to_motion_scores(acc_raw)

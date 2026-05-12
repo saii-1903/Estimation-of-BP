@@ -9,3 +9,4 @@ pymongo>=4.6.0
 python-dotenv>=1.0.0
 matplotlib>=3.5.0
 flask>=2.3.0
+openpyxl>=3.10.0
